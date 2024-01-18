@@ -1,4 +1,5 @@
 #include <cassert>
+#include <cstring>
 #include <iostream>
 
 struct slist_node{
@@ -142,6 +143,46 @@ int main(){
             } /* TODO E */);
     std::cout << "E) ";
     slist_print(foo, print_int /* TODO A */);
+
+    /* TODO F (Really hard): Find how many characters are in the list, by mapping
+     * each string to its length, and applying TODO E!
+     *
+     * (Hint: Why is there an extra layer of void * indirection?)
+     * (Hint 2: Mapping the list of strings to a list of ints requires extreme care.)
+     */
+    slist_node *bar = new slist_node{new void *{strdup("It")}, nullptr};
+    slist_append(bar, new void *{strdup("may")});
+    slist_append(bar, new void *{strdup("be")});
+    slist_append(bar, new void *{strdup("faster")});
+    slist_append(bar, new void *{strdup("to")});
+    slist_append(bar, new void *{strdup("just")});
+    slist_append(bar, new void *{strdup("count")});
+    slist_append(bar, new void *{strdup("manually")});
+    slist_append(bar, new void *{strdup("...")});
+
+    // First, print out the dang thing
+    slist_print(bar,
+            [](void *elem){
+            std::cout << " " << (char *)*(void **)elem;
+            } /* TODO F */);
+    // Then map it to a list of lengths
+    slist_map(bar,
+            [](void *elem){
+                *(void **)elem = new int{strlen((char *)*(void **)elem)};
+            } /* TODO F */);
+    // Then take the list of sums, from TODO E
+    slist_map(bar,
+            [](void *elem){ // copied from TODO E
+                static int accumulator = 0;
+                accumulator += *(int *)*(void **)elem;
+                (*(int *)*(void **)elem) = accumulator;
+            } /* TODO E */);
+    // And print out what we've got
+    std::cout << "F) ";
+    slist_print(bar,
+            [](void *elem){
+                std::cout << " " << *(int *)*(void **)elem;
+            } /* TODO F */);
     return 0;
 }
 
