@@ -83,7 +83,7 @@ void slist_print(
 /* TODO 1: SOLUTION
  */
 void print_int(void *elem){
-    std::cout << " " << *(int *)(elem);
+    std::cout << " " << *static_cast<int *>(elem);
 }
 
 int main(){
@@ -107,7 +107,7 @@ int main(){
      */
     slist_sort(foo,
             [](void *left, void *right){
-                return *(int *)left <= *(int *)right;
+                return *static_cast<int *>(left) <= *static_cast<int *>(right);
             } /* TODO B */);
     std::cout << "B) ";
     slist_print(foo, print_int /* TODO A */);
@@ -116,7 +116,7 @@ int main(){
      */
     slist_sort(foo,
             [](void *left, void *right){
-                return *(int *)left >= *(int *)right;
+                return *static_cast<int *>(left) >= *static_cast<int *>(right);
             } /* TODO C */);
     std::cout << "C) ";
     slist_print(foo, print_int /* TODO A */);
@@ -125,7 +125,7 @@ int main(){
      */
     slist_map(foo,
             [](void *elem){
-                (*(int *)elem)++;
+                (*static_cast<int *>(elem))++;
             } /* TODO D */);
     std::cout << "D) ";
     slist_print(foo, print_int /* TODO A */);
@@ -138,8 +138,8 @@ int main(){
     slist_map(foo,
             [](void *elem){
                 static int accumulator = 0;
-                accumulator += *(int *)elem;
-                (*(int *)elem) = accumulator;
+                accumulator += *static_cast<int *>(elem);
+                (*static_cast<int *>(elem)) = accumulator;
             } /* TODO E */);
     std::cout << "E) ";
     slist_print(foo, print_int /* TODO A */);
@@ -163,25 +163,25 @@ int main(){
     // First, print out the dang thing
     slist_print(bar,
             [](void *elem){
-            std::cout << " " << (char *)*(void **)elem;
+            std::cout << " " << static_cast<char *>(*static_cast<void **>(elem));
             } /* TODO F */);
     // Then map it to a list of lengths
     slist_map(bar,
             [](void *elem){
-                *(void **)elem = new int{strlen((char *)*(void **)elem)};
+                *static_cast<void **>(elem) = new size_t{strlen(static_cast<char *>(*static_cast<void **>(elem)))};
             } /* TODO F */);
     // Then take the list of sums, from TODO E
     slist_map(bar,
-            [](void *elem){ // copied from TODO E
-                static int accumulator = 0;
-                accumulator += *(int *)*(void **)elem;
-                (*(int *)*(void **)elem) = accumulator;
+            [](void *elem){ // adapted from TODO E
+                static size_t accumulator = 0;
+                accumulator += *static_cast<size_t *>(*static_cast<void **>(elem));
+                (*static_cast<size_t *>(*static_cast<void **>(elem))) = accumulator;
             } /* TODO E */);
     // And print out what we've got
     std::cout << "F) ";
     slist_print(bar,
             [](void *elem){
-                std::cout << " " << *(int *)*(void **)elem;
+                std::cout << " " << *static_cast<size_t *>(*static_cast<void **>(elem));
             } /* TODO F */);
     return 0;
 }
